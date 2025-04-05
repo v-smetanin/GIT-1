@@ -1,0 +1,90 @@
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strconv"
+)
+
+type Task struct {
+	ID   int
+	Name string
+}
+
+type TaskList struct {
+	tasks []Task
+	nextID int
+}
+
+func (tl *TaskList) AddTask(name string) {
+	task := Task{
+		ID:   tl.nextID,
+		Name: name,
+	}
+	tl.tasks = append(tl.tasks, task)
+	tl.nextID++
+}
+
+func (tl *TaskList) RemoveTask(id int) {
+	for i, task := range tl.tasks {
+		if task.ID == id {
+			tl.tasks = append(tl.tasks[:i], tl.tasks[i+1:]...)
+			break
+		}
+	}
+}
+
+func (tl *TaskList) ListTasks() {
+	if len(tl.tasks) == 0 {
+		fmt.Println("Список задач пуст.")
+		return
+	}
+	for _, task := range tl.tasks {
+		fmt.Printf("ID: %d, Задача: %s\n", task.ID, task.Name)
+	}
+}
+
+func main() {
+	taskList := TaskList{
+		tasks:  []Task{},
+		nextID: 1,
+	}
+
+	scanner := bufio.NewScanner(os.Stdin)
+	for {
+		fmt.Println("\nВыберите действие:")
+		fmt.Println("1. Добавить задачу")
+		fmt.Println("2. Удалить задачу")
+		fmt.Println("3. Показать список задач")
+		fmt.Println("4. Выйти")
+
+		scanner.Scan()
+		choice := scanner.Text()
+
+		switch choice {
+		case "1":
+			fmt.Println("Введите название задачи:")
+			scanner.Scan()
+			taskName := scanner.Text()
+			taskList.AddTask(taskName)
+		case "2":
+			fmt.Println("Введите ID задачи для удаления:")
+			scanner.Scan()
+			taskID, err := strconv.Atoi(scanner.Text())
+			if err == nil {
+				taskList.RemoveTask(taskID)
+			} else {
+				fmt.Println("Неверный ID.")
+			}
+		case "3":
+			taskList.ListTasks()
+		case "4":
+			fmt.Println("Выход из программы.")
+			return
+		default:
+			fmt.Println("Неверный выбор. Пожалуйста, попробуйте снова.")
+		}
+	}
+}
+

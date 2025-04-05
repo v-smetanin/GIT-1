@@ -58,7 +58,7 @@ func main() {
 		fmt.Println("2. Удалить задачу")
 		fmt.Println("3. Показать список задач")
 		fmt.Println("4. Выйти")
-
+# test
 		scanner.Scan()
 		choice := scanner.Text()
 
